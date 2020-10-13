@@ -7,7 +7,7 @@ import (
 
 //JSONResponse response
 type JSONResponse struct {
-	Payload string
+	Payload interface{}
 	Message string
 }
 

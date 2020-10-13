@@ -29,6 +29,8 @@ func UserLogin(db *gorm.DB, w http.ResponseWriter, r *http.Request, seed string)
 		respondError(w, http.StatusBadRequest, err.Error())
 		return
 	}
+	defer r.Body.Close()
+
 	userTemp := getUserOrNull(db, user.AppUserID, w, r)
 	if userTemp == nil {
 		respondJSON(w, http.StatusUnauthorized, JSONResponse{Message: "el usuario no está registrado ó está inactivo"})
@@ -39,12 +41,7 @@ func UserLogin(db *gorm.DB, w http.ResponseWriter, r *http.Request, seed string)
 		respondJSON(w, http.StatusUnauthorized, JSONResponse{Message: "usuario y/o contraseña incorrecta"})
 		return
 	}
-	v, err := createToken(user.AppUserID, seed)
-	if err != nil {
-		respondError(w, http.StatusInternalServerError, err.Error())
-	}
-	defer r.Body.Close()
-	respondJSON(w, http.StatusOK, JSONResponse{Payload: v, Message: "Ingreso Realizado!"})
+	respondJSON(w, http.StatusOK, JSONResponse{Payload: userTemp, Message: "Ingreso Realizado!"})
 }
 
 //This function creates a new token when a user log in to te app
