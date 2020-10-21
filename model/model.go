@@ -30,10 +30,10 @@ type AppUser struct {
 //AppProfile struct for profile table at the database
 type AppProfile struct {
 	ProfileID           string    `gorm:"primaryKey;type:varchar(60);"`
+	CompanyID           string    `gorm:"primaryKey;type:varchar(50);"`
 	ProfileDescription  string    `gorm:"type:text;"`
 	ProfileStatus       bool      `gorm:"type:bit;default:1;"`
 	ProfileCreationDate time.Time `gorm:"type:datetime;default:getdate();"`
-	CompanyID           string    `gorm:"primaryKey;type:varchar(50);"`
 }
 
 //UserProfile struct for user_profile table at the database

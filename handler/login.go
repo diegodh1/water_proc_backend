@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -41,7 +42,22 @@ func UserLogin(db *gorm.DB, w http.ResponseWriter, r *http.Request, seed string)
 		respondJSON(w, http.StatusUnauthorized, JSONResponse{Message: "usuario y/o contraseña incorrecta"})
 		return
 	}
-	respondJSON(w, http.StatusOK, JSONResponse{Payload: userTemp, Message: "Ingreso Realizado!"})
+	profiles := getProfilesUser(db, userTemp.AppUserID)
+	anonymousStruct := struct {
+		User     models.AppUser
+		Perfiles []models.UserProfile
+	}{*userTemp, profiles}
+	respondJSON(w, http.StatusOK, JSONResponse{Payload: anonymousStruct, Message: "Ingreso Realizado!"})
+}
+
+// this function get all the profiles that belongs to a user
+func getProfilesUser(db *gorm.DB, userid string) []models.UserProfile {
+	profiles := []models.UserProfile{}
+	if err := db.Debug().Where("app_user_id = ?", userid).Find(&profiles).Error; err != nil {
+		return profiles
+	}
+	fmt.Println(userid)
+	return profiles
 }
 
 //This function creates a new token when a user log in to te app
