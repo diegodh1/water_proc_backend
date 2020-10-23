@@ -27,7 +27,7 @@ func UserLogin(db *gorm.DB, w http.ResponseWriter, r *http.Request, seed string)
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(&user); err != nil {
-		respondError(w, http.StatusBadRequest, err.Error())
+		respondJSON(w, http.StatusUnauthorized, JSONResponse{Message: "Error interno del servidor"})
 		return
 	}
 	defer r.Body.Close()

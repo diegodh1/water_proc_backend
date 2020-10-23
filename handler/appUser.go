@@ -18,36 +18,42 @@ func SarchUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	decoder.DisallowUnknownFields()
 	userTemp := models.AppUser{}
 	if err := decoder.Decode(&userTemp); err != nil {
-		respondError(w, http.StatusBadRequest, err.Error())
+		respondJSON(w, http.StatusBadRequest, JSONResponse{Message: "Error interno del servidor"})
 		return
 	}
-	if err := db.Where("app_user_status = ?", 1).First(&user, userTemp).Error; err != nil {
-		respondError(w, http.StatusNotFound, err.Error())
+	if err := db.First(&user, userTemp).Error; err != nil {
+		respondJSON(w, http.StatusNotFound, JSONResponse{Message: "Usuario no registrado"})
 		return
 	}
-	respondJSON(w, http.StatusOK, user)
+	user.AppUserPassword = ""
+
+	anonymousStruct := struct {
+		User     models.AppUser
+		Perfiles []models.UserProfile
+	}{user, []models.UserProfile{}}
+	respondJSON(w, http.StatusOK, JSONResponse{Payload: anonymousStruct, Message: "Usuario encontrado"})
 }
 
 //CreateUser creates a new AppUser
 func CreateUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	user := models.AppUser{}
 	decoder := json.NewDecoder(r.Body)
+	defer r.Body.Close()
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(&user); err != nil {
-		respondError(w, http.StatusBadRequest, err.Error())
+		respondJSON(w, http.StatusBadRequest, JSONResponse{models.AppUser{}, "Erro interno del servidor"})
 		return
 	}
 	userTemp := getUserOrNull(db, user.AppUserID, w, r)
 	if userTemp != nil {
-		respondError(w, http.StatusBadRequest, "Ya existe un usuario con este ID")
+		respondJSON(w, http.StatusBadRequest, JSONResponse{models.AppUser{}, "Ya existe un usuario con este ID"})
 		return
 	}
-	defer r.Body.Close()
 	//hashing the password
 	pass := user.AppUserPassword
 	hashPass, err := bcrypt.GenerateFromPassword([]byte(pass), 10)
 	if err != nil {
-		respondError(w, http.StatusInternalServerError, err.Error())
+		respondJSON(w, http.StatusInternalServerError, JSONResponse{models.AppUser{}, "Error Interno del servidor"})
 		return
 	}
 	s := bytes.NewBuffer(hashPass).String()
@@ -56,13 +62,13 @@ func CreateUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 
 	if result := db.Create(&user); result.Error != nil || result.RowsAffected == 0 {
 		if result.Error != nil {
-			respondError(w, http.StatusBadRequest, err.Error())
+			respondJSON(w, http.StatusBadRequest, JSONResponse{models.AppUser{}, err.Error()})
 			return
 		}
-		respondError(w, http.StatusInternalServerError, "Error No se pudo realizar el registro")
+		respondJSON(w, http.StatusInternalServerError, JSONResponse{models.AppUser{}, "Error No se pudo realizar el registro"})
 		return
 	}
-	respondJSON(w, http.StatusCreated, user)
+	respondJSON(w, http.StatusCreated, JSONResponse{user, "Registro realizado"})
 }
 
 //UpdateUser this function change the internal states of a AppUser

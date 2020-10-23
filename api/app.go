@@ -46,7 +46,7 @@ func (a *App) Initialize(config *conf.Config) {
 //setting the routes
 func (a *App) setRouters() {
 	a.Post("/userLogin", a.UserLogin)
-	a.Get("/searchUser", a.SearchUser)
+	a.Post("/searchUser", a.SearchUser)
 	a.Get("/getCompanies", a.GetCompanies)
 	a.Post("/createUser", a.CreateUser)
 	a.Put("/updateUser/{UserID}", a.UpdateUser)
