@@ -49,7 +49,7 @@ func (a *App) setRouters() {
 	a.Post("/searchUser", a.SearchUser)
 	a.Get("/getCompanies", a.GetCompanies)
 	a.Post("/createUser", a.CreateUser)
-	a.Put("/updateUser/{UserID}", a.UpdateUser)
+	a.Post("/updateUser", a.UpdateUser)
 	a.Post("/createProfile", a.CreateProfile)
 	a.Put("/updateProfile/{ProfileID}", a.UpdateProfile)
 	a.Post("/createUserProfile", a.CreateUserProfile)

@@ -6,7 +6,6 @@ import (
 	"net/http"
 	models "water_proccesing/model"
 
-	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -73,37 +72,28 @@ func CreateUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 
 //UpdateUser this function change the internal states of a AppUser
 func UpdateUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	UserID := vars["UserID"]
-	user := getUserOrNull(db, UserID, w, r)
-	if user == nil {
-		respondError(w, http.StatusBadRequest, "Usuario no registrado")
-		return
-	}
+	user := models.AppUser{}
 	decoder := json.NewDecoder(r.Body)
+	defer r.Body.Close()
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(&user); err != nil {
-		respondError(w, http.StatusBadRequest, err.Error())
+		respondJSON(w, http.StatusBadRequest, JSONResponse{models.AppUser{}, "Error petición mal estructurada"})
 		return
 	}
-	//hashing the password
-	pass := user.AppUserPassword
-	hashPass, err := bcrypt.GenerateFromPassword([]byte(pass), 10)
-	if err != nil {
-		respondError(w, http.StatusInternalServerError, err.Error())
+	userTemp := getUserOrNull(db, user.AppUserID, w, r)
+	if userTemp == nil {
+		respondJSON(w, http.StatusBadRequest, JSONResponse{Message: "Error el usuario no existe"})
 		return
 	}
-	s := bytes.NewBuffer(hashPass).String()
-	user.AppUserID = UserID
-	user.AppUserPassword = s
-	//end hashing
-	defer r.Body.Close()
-
-	if err := db.Model(&user).Omit("AppUserID", "CompanyID", "AppUserCreationDate").Updates(user).Error; err != nil {
-		respondError(w, http.StatusInternalServerError, err.Error())
+	if userTemp.CompanyID != user.CompanyID {
+		respondJSON(w, http.StatusBadRequest, JSONResponse{Message: "Este usuario no pertenece a su organización"})
 		return
 	}
-	respondJSON(w, http.StatusOK, user)
+	if err := db.Model(&user).Where("company_id = ?", user.CompanyID).Omit("AppUserID", "CompanyID", "AppUserCreationDate", "AppUserPassword").Save(user).Error; err != nil {
+		respondJSON(w, http.StatusInternalServerError, JSONResponse{Message: "Error interno del servidor"})
+		return
+	}
+	respondJSON(w, http.StatusOK, JSONResponse{user, "Actualización realizada!"})
 }
 
 // get a user whose AppUserID is equal to the params given
