@@ -25,11 +25,11 @@ func SarchUser(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user.AppUserPassword = ""
-
+	profiles := getProfilesUser(db, userTemp.AppUserID)
 	anonymousStruct := struct {
 		User     models.AppUser
 		Perfiles []models.UserProfile
-	}{user, []models.UserProfile{}}
+	}{user, profiles}
 	respondJSON(w, http.StatusOK, JSONResponse{Payload: anonymousStruct, Message: "Usuario encontrado"})
 }
 

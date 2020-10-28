@@ -4,6 +4,42 @@ import (
 	"time"
 )
 
+//PretratamientoDisp struct for company table at the database
+type PretratamientoDisp struct {
+	ForDate  time.Time `gorm:"type:datetime;default:getdate();"`
+	OnHour   int       `gorm:"type:int;default:0;"`
+	Total    float64   `gorm:"type:int;default:0;"`
+	TagIndex int       `gorm:"type:int;default:0;"`
+}
+
+//PretratamientoDispWeek struct for company table at the database
+type PretratamientoDispWeek struct {
+	ForDate  time.Time `gorm:"type:datetime;default:getdate();"`
+	WeekDay  string    `gorm:"type:string;"`
+	Total    float64   `gorm:"type:int;default:0;"`
+	TagIndex int       `gorm:"type:int;default:0;"`
+}
+
+//PretratamientoDispMonth struct for company table at the database
+type PretratamientoDispMonth struct {
+	OnYear   int     `gorm:"type:int;"`
+	OnWeek   int     `gorm:"type:int;"`
+	Total    float64 `gorm:"type:int;default:0;"`
+	TagIndex int     `gorm:"type:int;default:0;"`
+}
+
+//RegisterFilter struct for company table at the database
+type RegisterFilter struct {
+	StartDate time.Time
+	FinalDate time.Time
+	TagIndex  int
+	TableName string
+	Year      int
+	StartWeek int
+	FinalWeek int
+	Month     int
+}
+
 //Company struct for company table at the database
 type Company struct {
 	CompanyID           string    `gorm:"primaryKey;type:varchar(50);"`

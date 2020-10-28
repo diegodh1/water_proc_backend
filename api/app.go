@@ -48,12 +48,16 @@ func (a *App) setRouters() {
 	a.Post("/userLogin", a.UserLogin)
 	a.Post("/searchUser", a.SearchUser)
 	a.Get("/getCompanies", a.GetCompanies)
+	a.Post("/getRegistersDisponibilityDay", a.GetRegistersDisponibilityDay)
+	a.Post("/getRegistersDisponibilityWeek", a.GetRegistersDisponibilityWeek)
+	a.Post("/getRegistersDisponibilityMonth", a.GetRegistersDisponibilityMonth)
 	a.Post("/createUser", a.CreateUser)
 	a.Post("/updateUser", a.UpdateUser)
 	a.Post("/createProfile", a.CreateProfile)
 	a.Put("/updateProfile/{ProfileID}", a.UpdateProfile)
 	a.Post("/createUserProfile", a.CreateUserProfile)
 	a.Post("/updateUserProfile", a.UpdateUserProfile)
+	a.Get("/getAllProfiles", a.GetAllProfiles)
 }
 
 //Get all get functions
@@ -79,6 +83,21 @@ func (a *App) UserLogin(w http.ResponseWriter, r *http.Request) {
 //GetCompanies get all companies at the database
 func (a *App) GetCompanies(w http.ResponseWriter, r *http.Request) {
 	handler.GetCompanies(a.DB, w, r)
+}
+
+//GetRegistersDisponibilityDay get all companies at the database
+func (a *App) GetRegistersDisponibilityDay(w http.ResponseWriter, r *http.Request) {
+	handler.GetRegistersDisponibilityDay(a.DB, w, r)
+}
+
+//GetRegistersDisponibilityWeek get all companies at the database
+func (a *App) GetRegistersDisponibilityWeek(w http.ResponseWriter, r *http.Request) {
+	handler.GetRegistersDisponibilityWeek(a.DB, w, r)
+}
+
+//GetRegistersDisponibilityMonth get all companies at the database
+func (a *App) GetRegistersDisponibilityMonth(w http.ResponseWriter, r *http.Request) {
+	handler.GetRegistersDisponibilityMonth(a.DB, w, r)
 }
 
 //SearchUser search a user by ID
@@ -114,6 +133,11 @@ func (a *App) CreateUserProfile(w http.ResponseWriter, r *http.Request) {
 //UpdateUserProfile let update a profile given to a user
 func (a *App) UpdateUserProfile(w http.ResponseWriter, r *http.Request) {
 	handler.UpdateUserProfile(a.DB, w, r)
+}
+
+//GetAllProfiles get all companies at the database
+func (a *App) GetAllProfiles(w http.ResponseWriter, r *http.Request) {
+	handler.GetAllProfiles(a.DB, w, r)
 }
 
 //Run run app

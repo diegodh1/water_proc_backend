@@ -9,6 +9,13 @@ import (
 	"gorm.io/gorm"
 )
 
+//GetAllProfiles get all the profiles available at hte database
+func GetAllProfiles(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
+	profiles := []models.AppProfile{}
+	db.Where("profile_status = ?", 1).Find(&profiles)
+	respondJSON(w, http.StatusOK, profiles)
+}
+
 //CreateProfile creates a new profile at the database
 func CreateProfile(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	profile := models.AppProfile{}

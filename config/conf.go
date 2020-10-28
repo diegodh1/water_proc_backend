@@ -43,10 +43,10 @@ func GetConfig() *Config {
 	return &Config{
 		DB: &DBConfig{
 			Username: getEnv("DB_USER_NAME", "sa"),
-			Password: getEnv("DB_PASS", "Cristiano1994"),
-			Database: getEnv("DB_NAME", "Water"),
+			Password: getEnv("DB_PASS", "Celco2019("),
+			Database: getEnv("DB_NAME", "InteApp"),
 			Port:     convert(getEnv("DB_PORT", "1433")),
-			Host:     getEnv("DB_HOST", "localhost"),
+			Host:     getEnv("DB_HOST", "192.168.0.21"),
 		},
 		SecretSeed: getEnv("SECRET_KEY", "integrapps"),
 	}
