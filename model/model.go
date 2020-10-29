@@ -13,11 +13,11 @@ type PretratamientoDisp struct {
 }
 
 //PretratamientoDispWeek struct for company table at the database
-type PretratamientoDispWeek struct {
-	ForDate  time.Time `gorm:"type:datetime;default:getdate();"`
-	WeekDay  string    `gorm:"type:string;"`
-	Total    float64   `gorm:"type:int;default:0;"`
-	TagIndex int       `gorm:"type:int;default:0;"`
+type PretratamientoDispWk struct {
+	ForDate time.Time `gorm:"type:datetime;default:getdate();"`
+	WeekDay int       `gorm:"type:int;"`
+	Total   float64   `gorm:"type:int;"`
+	Tag     int       `gorm:"type:int;"`
 }
 
 //PretratamientoDispMonth struct for company table at the database
@@ -30,14 +30,10 @@ type PretratamientoDispMonth struct {
 
 //RegisterFilter struct for company table at the database
 type RegisterFilter struct {
-	StartDate time.Time
-	FinalDate time.Time
-	TagIndex  int
-	TableName string
-	Year      int
-	StartWeek int
-	FinalWeek int
-	Month     int
+	SelectedDate time.Time
+	TagIndex     int
+	TableName    string
+	TypeReport   int
 }
 
 //Company struct for company table at the database

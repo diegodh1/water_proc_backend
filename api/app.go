@@ -48,9 +48,7 @@ func (a *App) setRouters() {
 	a.Post("/userLogin", a.UserLogin)
 	a.Post("/searchUser", a.SearchUser)
 	a.Get("/getCompanies", a.GetCompanies)
-	a.Post("/getRegistersDisponibilityDay", a.GetRegistersDisponibilityDay)
-	a.Post("/getRegistersDisponibilityWeek", a.GetRegistersDisponibilityWeek)
-	a.Post("/getRegistersDisponibilityMonth", a.GetRegistersDisponibilityMonth)
+	a.Post("/getRegistersDisponibility", a.GetRegistersDisponibility)
 	a.Post("/createUser", a.CreateUser)
 	a.Post("/updateUser", a.UpdateUser)
 	a.Post("/createProfile", a.CreateProfile)
@@ -85,19 +83,9 @@ func (a *App) GetCompanies(w http.ResponseWriter, r *http.Request) {
 	handler.GetCompanies(a.DB, w, r)
 }
 
-//GetRegistersDisponibilityDay get all companies at the database
-func (a *App) GetRegistersDisponibilityDay(w http.ResponseWriter, r *http.Request) {
-	handler.GetRegistersDisponibilityDay(a.DB, w, r)
-}
-
-//GetRegistersDisponibilityWeek get all companies at the database
-func (a *App) GetRegistersDisponibilityWeek(w http.ResponseWriter, r *http.Request) {
-	handler.GetRegistersDisponibilityWeek(a.DB, w, r)
-}
-
-//GetRegistersDisponibilityMonth get all companies at the database
-func (a *App) GetRegistersDisponibilityMonth(w http.ResponseWriter, r *http.Request) {
-	handler.GetRegistersDisponibilityMonth(a.DB, w, r)
+//GetRegistersDisponibility get all companies at the database
+func (a *App) GetRegistersDisponibility(w http.ResponseWriter, r *http.Request) {
+	handler.GetRegistersDisponibility(a.DB, w, r)
 }
 
 //SearchUser search a user by ID
