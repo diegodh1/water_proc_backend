@@ -12,7 +12,7 @@ type PretratamientoDisp struct {
 	TagIndex int       `gorm:"type:int;default:0;"`
 }
 
-//PretratamientoDispWeek struct for company table at the database
+//PretratamientoDispWk struct for company table at the database
 type PretratamientoDispWk struct {
 	ForDate time.Time `gorm:"type:datetime;default:getdate();"`
 	WeekDay int       `gorm:"type:int;"`
@@ -62,7 +62,6 @@ type AppUser struct {
 //AppProfile struct for profile table at the database
 type AppProfile struct {
 	ProfileID           string    `gorm:"primaryKey;type:varchar(60);"`
-	CompanyID           string    `gorm:"primaryKey;type:varchar(50);"`
 	ProfileDescription  string    `gorm:"type:text;"`
 	ProfileStatus       bool      `gorm:"type:bit;default:1;"`
 	ProfileCreationDate time.Time `gorm:"type:datetime;default:getdate();"`
@@ -72,7 +71,6 @@ type AppProfile struct {
 type UserProfile struct {
 	AppUserID               string    `gorm:"primaryKey;type:varchar(50);"`
 	ProfileID               string    `gorm:"primaryKey;type:varchar(60);"`
-	CompanyID               string    `gorm:"primaryKey;type:varchar(50);"`
 	UserProfileStatus       bool      `gorm:"type:bit;default:1;"`
 	UserProfileCreationDate time.Time `gorm:"type:datetime;default:getdate();"`
 }

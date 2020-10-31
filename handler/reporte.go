@@ -3,6 +3,7 @@ package handler
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -93,9 +94,13 @@ func GetRegistersDisponibilityDay(db *gorm.DB, startDate time.Time, finalDate ti
 	if err := db.Group("for_date, on_hour, tag_index, total").Order("for_date,on_hour asc").Having("tag_index = ? AND for_date BETWEEN ? AND ?", tag, startDate, finalDate).Find(&registers).Error; err != nil {
 		return "", nil
 	}
+	if len(registers) == 0 {
+		return "", errors.New("no hay registros para esta fecha")
+	}
 	t := "Disponibilidad del día " + strconv.Itoa(startDate.Year()) + "/" + strconv.Itoa(int(startDate.Month())) + "/" + strconv.Itoa(startDate.Day())
 	base64 := createChartsByDay(registers, t, "Hora", limite)
 	return base64, nil
+
 }
 
 //GetRegistersDisponibilityWeek get all the registers from the view by week
@@ -106,12 +111,16 @@ func GetRegistersDisponibilityWeek(db *gorm.DB, startDate time.Time, finalDate t
 	if err := db.Where("(for_date BETWEEN ? AND ?) AND tag = ?", startDate, finalDate, tag).Find(&registers).Error; err != nil {
 		return "", nil
 	}
+	if len(registers) == 0 {
+		return "", errors.New("no hay registros para esta fecha")
+	}
 	sort.Slice(registers, func(i, j int) bool {
 		return registers[i].ForDate.Before(registers[j].ForDate)
 	})
 	t := "Disponibilidad entre los días " + strconv.Itoa(startDate.Year()) + "/" + strconv.Itoa(int(startDate.Month())) + "/" + strconv.Itoa(startDate.Day()) + " - " + strconv.Itoa(finalDate.Year()) + "/" + strconv.Itoa(int(finalDate.Month())) + "/" + strconv.Itoa(finalDate.Day())
 	base64 := createChartsByWeek(registers, t, "Día", limite)
 	return base64, nil
+
 }
 
 //GetRegistersDisponibilityMonth get all the registers from the view by week
@@ -126,6 +135,9 @@ func GetRegistersDisponibilityMonth(db *gorm.DB, startDate time.Time, finalDate 
 	ORDER BY on_year,on_week
 	`, startDate, finalDate, tag).Scan(&registers).Error; err != nil {
 		return "", err
+	}
+	if len(registers) == 0 {
+		return "", errors.New("no hay registros para esta fecha")
 	}
 	t := "Disponibilidad de las semanas entre los días " + strconv.Itoa(startDate.Year()) + "/" + strconv.Itoa(int(startDate.Month())) + "/" + strconv.Itoa(startDate.Day()) + " - " + strconv.Itoa(finalDate.Year()) + "/" + strconv.Itoa(int(finalDate.Month())) + "/" + strconv.Itoa(finalDate.Day())
 	base64 := createChartsByMonth(registers, t, "Semana", limite)

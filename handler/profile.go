@@ -25,7 +25,7 @@ func CreateProfile(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 		respondError(w, http.StatusBadRequest, err.Error())
 		return
 	}
-	profileTemp := getProfileOrNull(db, profile.ProfileID, profile.CompanyID)
+	profileTemp := getProfileOrNull(db, profile.ProfileID)
 	if profileTemp != nil {
 		respondError(w, http.StatusBadRequest, "Ya existe un perfil con este ID para esta empresa")
 		return
@@ -55,7 +55,7 @@ func UpdateProfile(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	}
 	profile.ProfileID = profileID
 	defer r.Body.Close()
-	profileTemp := getProfileOrNull(db, profile.ProfileID, profile.CompanyID)
+	profileTemp := getProfileOrNull(db, profile.ProfileID)
 	if profileTemp == nil {
 		respondError(w, http.StatusBadRequest, "Este Perfil No existe")
 		return
@@ -68,9 +68,9 @@ func UpdateProfile(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 }
 
 // get a user whose primary key is equal to the param
-func getProfileOrNull(db *gorm.DB, profileID string, companyID string) *models.AppProfile {
+func getProfileOrNull(db *gorm.DB, profileID string) *models.AppProfile {
 	profile := models.AppProfile{}
-	if err := db.First(&profile, models.AppProfile{ProfileID: profileID, CompanyID: companyID}).Error; err != nil {
+	if err := db.First(&profile, models.AppProfile{ProfileID: profileID}).Error; err != nil {
 		return nil
 	}
 	return &profile

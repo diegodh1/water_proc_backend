@@ -32,7 +32,7 @@ func UserLogin(db *gorm.DB, w http.ResponseWriter, r *http.Request, seed string)
 	}
 	defer r.Body.Close()
 
-	userTemp := getUserOrNull(db, user.AppUserID, w, r)
+	userTemp := getUserOrNullLogin(db, user.AppUserID, w, r)
 	if userTemp == nil {
 		respondJSON(w, http.StatusUnauthorized, JSONResponse{Message: "el usuario no está registrado ó está inactivo"})
 		return
@@ -53,7 +53,7 @@ func UserLogin(db *gorm.DB, w http.ResponseWriter, r *http.Request, seed string)
 // this function get all the profiles that belongs to a user
 func getProfilesUser(db *gorm.DB, userid string) []models.UserProfile {
 	profiles := []models.UserProfile{}
-	if err := db.Debug().Where("app_user_id = ?", userid).Find(&profiles).Error; err != nil {
+	if err := db.Debug().Where("app_user_id = ? and user_profile_status = ?", userid, true).Find(&profiles).Error; err != nil {
 		return profiles
 	}
 	fmt.Println(userid)

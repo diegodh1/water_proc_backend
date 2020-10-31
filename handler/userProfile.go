@@ -14,24 +14,28 @@ func CreateUserProfile(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 	if err := decoder.Decode(&userProfile); err != nil {
-		respondError(w, http.StatusBadRequest, err.Error())
-		return
-	}
-	userProfileTemp := getUserProfileOrNull(db, userProfile.ProfileID, userProfile.CompanyID, userProfile.AppUserID)
-	if userProfileTemp != nil {
-		respondError(w, http.StatusBadRequest, "El usuario ya tiene asignado este perfil")
+		respondJSON(w, http.StatusBadRequest, JSONResponse{Message: "Error al recibir la petición"})
 		return
 	}
 	defer r.Body.Close()
-	if result := db.Create(&userProfile); result.Error != nil || result.RowsAffected == 0 {
-		if result.Error != nil {
-			respondError(w, http.StatusBadRequest, result.Error.Error())
+	UserTemp := getUserProfileOrNull(db, userProfile.ProfileID, userProfile.AppUserID)
+	if UserTemp != nil {
+		if err := db.Model(&userProfile).Where("app_user_id = ? and profile_id = ?", userProfile.AppUserID, userProfile.ProfileID).Omit("UserProfileCreationDate").Save(userProfile).Error; err != nil {
+			respondJSON(w, http.StatusInternalServerError, JSONResponse{Message: "Error No se pudo realizar el registro"})
 			return
 		}
-		respondError(w, http.StatusInternalServerError, "Error No se pudo realizar el registro")
-		return
 	}
-	respondJSON(w, http.StatusCreated, userProfile)
+	if UserTemp == nil {
+		if result := db.Create(&userProfile); result.Error != nil || result.RowsAffected == 0 {
+			if result.Error != nil {
+				respondJSON(w, http.StatusBadRequest, JSONResponse{Message: "Error No se pudo realizar el registro"})
+				return
+			}
+			respondJSON(w, http.StatusInternalServerError, JSONResponse{Message: "Error No se pudo realizar el registro"})
+			return
+		}
+	}
+	respondJSON(w, http.StatusCreated, JSONResponse{Message: "Operación realizada con éxito!"})
 }
 
 //UpdateUserProfile this function change the internal states of a UserProfile
@@ -44,7 +48,7 @@ func UpdateUserProfile(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer r.Body.Close()
-	userProfileTemp := getUserProfileOrNull(db, userProfile.ProfileID, userProfile.CompanyID, userProfile.AppUserID)
+	userProfileTemp := getUserProfileOrNull(db, userProfile.ProfileID, userProfile.AppUserID)
 	if userProfileTemp == nil {
 		respondError(w, http.StatusBadRequest, "Este usuario no tiene asignado este perfil")
 		return
@@ -57,9 +61,9 @@ func UpdateUserProfile(db *gorm.DB, w http.ResponseWriter, r *http.Request) {
 }
 
 // get a UserProfile whose primary key is equal to the param
-func getUserProfileOrNull(db *gorm.DB, profileID string, companyID string, appUserID string) *models.UserProfile {
+func getUserProfileOrNull(db *gorm.DB, profileID string, appUserID string) *models.UserProfile {
 	userProfile := models.UserProfile{}
-	if err := db.First(&userProfile, models.UserProfile{ProfileID: profileID, CompanyID: companyID, AppUserID: appUserID}).Error; err != nil {
+	if err := db.First(&userProfile, models.UserProfile{ProfileID: profileID, AppUserID: appUserID}).Error; err != nil {
 		return nil
 	}
 	return &userProfile

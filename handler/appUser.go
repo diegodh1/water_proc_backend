@@ -104,3 +104,12 @@ func getUserOrNull(db *gorm.DB, appUserID string, w http.ResponseWriter, r *http
 	}
 	return &user
 }
+
+// get a user whose AppUserID is equal to the params given
+func getUserOrNullLogin(db *gorm.DB, appUserID string, w http.ResponseWriter, r *http.Request) *models.AppUser {
+	user := models.AppUser{}
+	if err := db.Where("app_user_status = ?", true).First(&user, models.AppUser{AppUserID: appUserID}).Error; err != nil {
+		return nil
+	}
+	return &user
+}
