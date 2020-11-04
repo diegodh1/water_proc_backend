@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-//PretratamientoDisp struct for company table at the database
+//PretratamientoDisp struct for a view at the database
 type PretratamientoDisp struct {
 	ForDate  time.Time `gorm:"type:datetime;default:getdate();"`
 	OnHour   int       `gorm:"type:int;default:0;"`
@@ -12,7 +12,7 @@ type PretratamientoDisp struct {
 	TagIndex int       `gorm:"type:int;default:0;"`
 }
 
-//PretratamientoDispWk struct for company table at the database
+//PretratamientoDispWk struct for a view at the database
 type PretratamientoDispWk struct {
 	ForDate time.Time `gorm:"type:datetime;default:getdate();"`
 	WeekDay int       `gorm:"type:int;"`
@@ -20,8 +20,56 @@ type PretratamientoDispWk struct {
 	Tag     int       `gorm:"type:int;"`
 }
 
-//PretratamientoDispMonth struct for company table at the database
+//PretratamientoDispMonth struct for a view at the database
 type PretratamientoDispMonth struct {
+	OnYear   int     `gorm:"type:int;"`
+	OnWeek   int     `gorm:"type:int;"`
+	Total    float64 `gorm:"type:int;default:0;"`
+	TagIndex int     `gorm:"type:int;default:0;"`
+}
+
+//DigestionDisp struct for a view at the database
+type DigestionDisp struct {
+	ForDate  time.Time `gorm:"type:datetime;default:getdate();"`
+	OnHour   int       `gorm:"type:int;default:0;"`
+	Total    float64   `gorm:"type:int;default:0;"`
+	TagIndex int       `gorm:"type:int;default:0;"`
+}
+
+//DigestionDispWk struct for a view at the database
+type DigestionDispWk struct {
+	ForDate time.Time `gorm:"type:datetime;default:getdate();"`
+	WeekDay int       `gorm:"type:int;"`
+	Total   float64   `gorm:"type:int;"`
+	Tag     int       `gorm:"type:int;"`
+}
+
+//DigestionDispMonth struct for a view at the database
+type DigestionDispMonth struct {
+	OnYear   int     `gorm:"type:int;"`
+	OnWeek   int     `gorm:"type:int;"`
+	Total    float64 `gorm:"type:int;default:0;"`
+	TagIndex int     `gorm:"type:int;default:0;"`
+}
+
+//SedimentoDisp struct for a view at the database
+type SedimentoDisp struct {
+	ForDate  time.Time `gorm:"type:datetime;default:getdate();"`
+	OnHour   int       `gorm:"type:int;default:0;"`
+	Total    float64   `gorm:"type:int;default:0;"`
+	TagIndex int       `gorm:"type:int;default:0;"`
+}
+
+//SedimentoDispWk struct for a view at the database
+type SedimentoDispWk struct {
+	ForDate time.Time `gorm:"type:datetime;default:getdate();"`
+	WeekDay int       `gorm:"type:int;"`
+	Total   float64   `gorm:"type:int;"`
+	Tag     int       `gorm:"type:int;"`
+}
+
+//SedimentoDispMonth struct for a view at the database
+type SedimentoDispMonth struct {
 	OnYear   int     `gorm:"type:int;"`
 	OnWeek   int     `gorm:"type:int;"`
 	Total    float64 `gorm:"type:int;default:0;"`
@@ -32,7 +80,7 @@ type PretratamientoDispMonth struct {
 type RegisterFilter struct {
 	SelectedDate time.Time
 	TagIndex     int
-	TableName    string
+	ProcessType  int
 	TypeReport   int
 }
 
